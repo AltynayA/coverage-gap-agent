@@ -11,5 +11,5 @@ Development of an Al Agent for Automated Code Coverage Gap Detection and Unit Te
 
 ## Links
 
-- YouTrack: [link]
+- YouTrack: https://altynay-ayazbayeva.youtrack.cloud/projects/CGA
 - Documentation: `docs/`
