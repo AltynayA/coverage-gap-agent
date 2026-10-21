@@ -71,6 +71,49 @@ Abdullin et al. (2025) compared search-based testing, symbolic execution, and LL
 This divergence between coverage and mutation score is the methodological reason why the evaluation reports both metrics. Coverage measures reach, that is, whether a test executes the target line or branch. Mutation score measures assertion strength, that is, whether the test detects a seeded fault in the code it reaches. A suite can achieve high line coverage while killing few mutants if its assertions are weak or absent, and a suite can kill mutants on the code it reaches while leaving large regions uncovered (Abdullin et al., 2025; Radaideh et al., 2026). Reporting both metrics prevents the evaluation from infalting test quality on the basis of coverage alone and allows the proposed system's contribution to be assessed on both dimensions rather than one.
 
 
+## 5. Summary of Reviewed Studies
+Table 1 summarises the studies reviewed in Sections 2 and 3. Each row corresponds to one source; the columns record the approach, the language, the feedback type, the benchmark, the principal result, and the limitation most relevant to this project.
+
+**Table 1. Comparison of reviewed systems.**
+
+| Author / Year | Approach | Language | Feedback type | Benchmark | Key result | Limitation |
+|---|---|---|---|---|---|---|
+| Pizzorno & Berger, 2024 | CoverUp | Python | Coverage | CodaMosa suite | 80% median line+branch | Reactive static analysis |
+| Le et al., 2026 | TestWeaver | Python | Coverage + execution + slicing | CodaMosa suite (425 modules) | 68% line, 54% branch | Python-only, single LLM |
+| Gu et al., 2026 | Panta | Java | Coverage + static control flow | Defects4J (130 classes) | 70.18% line | Java-only, class-level isolation |
+| Chen et al., 2024 | ChatUniTest | Java | Execution + repair | 264 focal methods | 59.6% line | No coverage feedback |
+| Zhou et al., 2026 | ChaCo | Python | Coverage + execution | SciPy, Qiskit, Pandas | 30% of PRs fully covered | Three projects only |
+| Dakhel et al., 2024 | MuTAP | Python | Mutation | HumanEval, Refactory | 93.57% mutation (llama-2-chat, few-shot) | Python-only; primitive assertions |
+| Radaideh et al., 2026 | CANDOR vs. one-shot | Java | Coverage + execution | 25-class system | One-shot 88.35% mutation; CANDOR 35.92% | Single run,small system |
+| Lemieux et al., 2023 | CodaMosa | Python | Coverage (hybrid) | 486 benchmarks | Significantly higher than MOSA on 173 | Search remains central |
+| Lukasczyk & Fraser, 2022 | Pynguin | Python | Coverage | 118 modules | 68.0% mean branch (DynaMOSA) | Dynamic typing limits inference |
+| Abdullin et al., 2025 | SBST vs. symbolic vs. LLM | Java | Mixed | GitBug-Java | LLM comparable coverage; best median mutation | Class-level only |
+| Walczak et al., 2026 | Prompting comparison | Python | None | 12 methods | Chain-of-thought best; CSR varies | Small sample |
+| Yang et al., 2024 | Prompting comparison | Java | None | Defects4J (17 projects) | Prompt style affects CSR and coverage | Data leakage risk |
+| Ouédraogo et al., 2026 | Prompting comparison | Java | None | Defects4J, SF110, CMD | Graph-of-thought best; model-dependent | Limited real-world complexity |
+| Andrzejewski et al., 2025 | Prompting comparison | Python | None | 50 pairs | Simpler prompts outperformed chain-of-thought | Small sample |
+| Lops et al., 2025 | Prompting comparison | Java | None | CLASSES2TEST | Few-shot improved Gemini | Low compilation success |
+| Zhang et al., 2026 | Chain-of-thought + RL | Java | None | 96K focal methods | TestCTRL outperforms baselines | Java bias; data leakage |
+| Zhang et al., 2025 | RAG+NLP | Not specified | None | 100 requirements | Near human-level for simple cases | Complex cases underperform |
+| Bhatia et al., 2024 | ChatGPT vs Pynguin | Python | Iterative prompting | 109 samples | No significant difference for functions | High incorrect assertions |
+| Rodríguez et al., 2026 | LLM vs human | Java | None | 10 artifacts | Both reach 100% branch | Very small sample |
+
+The table supports the following observations:
+1)  The systems that achieve the highest coverage in the reviewed literature combine more than one mechanism: CoverUp and TestWeaver pair coverage with execution feedback, and Panta pairs coverage with static control flow. No single-mechanism system appears at the top of any metric. 
+2) The limitation column is consistent across the coverage-driven systems: each applies static analysis or execution feedback during the loop, and none applies it before the first prompt.
+
+
+## 6. Synthesis and Research Gap
+Three findings emerge from the reviewed literature.
+
+First, prompting strategy affects coverage and correctness, but the effect is inconsistent and cannot be depended on in isolation (Section 2.1). Prompting is a background condition, not the mechanism that closes coverage gaps (Walczak et al., 2026; Yang et al., 2024; Andrzejewski et al., 2025; Ouédraogo et al., 2026).
+
+Second, feedback improves coverage, and different feedback types address different weaknesses. Coverage feedback targets uncovered lines (Pizzorno & Berger, 2024; Le et al., 2026; Gu et al., 2026). Execution feedback repairs failing tests (Chen et al., 2024; Zhou et al., 2026). Mutation feedback measures fault detection (Dakhel et al., 2024; Radaideh et al., 2026). Static context reduces invalid tests (Chen et al., 2024; Le et al., 2026; Gu et al., 2026).
+
+Third, no reviewed system combines proactive static analysis — extracting branch predicates or type constraints before the first prompt — with a coverage-driven agentic loop. Existing systems apply static analysis during the loop: after a failure (ChatUniTest), after a target is selected (Panta), or after a coverage plateau is detected (CodaMosa, TestWeaver). ChatUniTest's Object Construction Graphs are the closest existing mechanism, but they guide driver-code construction rather than encode branch conditions (Chen et al., 2024). The timing of static analysis, rather than its presence, is the gap this project addresses.
+
+This gap is consistent with the failure modes reported in the literature. CoverUp's own evaluation reports cases where conditional imports prevent correct context from reaching the prompt (Pizzorno & Berger, 2024). Yang et al. (2024) report unresolved symbols and parameter mismatches as common errors in generated tests. Radaideh et al. (2026) show that per-class isolation prevents construction of cross-class dependencies. These three failure modes motivate the hypothesis behind this project: that extracting constraints before generation would reduce them. Testing that hypothesis is the purpose of the diploma project.
+
 ## References
 Abdullin, A., Derakhshanfar, P., & Panichella, A. (2025). Test Wars: A Comparative Study of SBST, Symbolic Execution, and LLM-Based Approaches to Unit Test Generation. 221–232. https://doi.org/10.1109/ICST62969.2025.10989033
 
