@@ -10,11 +10,11 @@ Software testing plays a critical role in the software development cycle and mai
 Two observations frame the rest of this review. First, prompting strategy affects code coverage and correctness of generated tests, but the effect is inconsistent across different models, datasets, and code difficulty. Second, the strongest recent systems do not rely on prompting alone, instead they measure the result of a generation round and use that measurement to guide the next round. The review therefore treats prompting as a background finding and focuses on feedback mechanisms.
 
 
-### 2.1  Prompting Strategy Background
+### 2.1 Prompting Strategy Background
 Research over the last two years confirms that prompting strategy affects code coverage of LLM-generated unit tests (Walczak et al., 2026; Yang et al., 2024; Ouédraogo et al., 2026). Several studies have successfully compared prompting strategies among each other (Andrzejewski et al., 2025; Lops et al., 2025) and compared them with external baselines such as manually written tests or traditional tools like Pynguin and EvoSuite (Rodríguez et al., 2026; Bhatia et al., 2024; Ouédraogo et al., 2026). These studies are consistent in measuring prompting strategy using standard metrics such as code coverage, compilation success rate, and mutation score. However, these studies take different variables into account such as model family and code context size (Walczak et al., 2026), reinforcement learning and model fine-tuning (Zhang et al., 2026), integrating a retrieval-augmented generation (RAG) framework (Zhang et al., 2025), or model type and case difficulty (Andrzejewski et al., 2025).
 Consequently, the question of how isolating prompting strategy as a single controlled variable affects these metrics remains unresolved. Although prompting strategy is a legitimate variable, its effect is not consistent . This variation justifies the systems reviewed in Section 3, which measure the result of generation and feed it back rather than relying on prompt design solely.
 
-Consequently, it is important to highlight the prompting strategy factor when building this system.  First, prompting strategy is a leigitimate variable with a  effect measurable on coverage. Second, the extent of that effect depends on the model, the dataset, and the code under test difficulty. Thus, prompting is operationalized as a background condition within the scope of this project. The future system assumes **a fixed prompting strategy** and focuses on how measured results are fed back into the next generation iteration. The systems reviewed in Section 3 are those that close this feedback loop rather than relying on prompt design alone.
+Consequently, it is important to highlight the prompting strategy factor when building this system.  First, prompting strategy is a legimate variable and its effect on coverage is measurable. Second, the extent of that effect depends on the model, the dataset, and the code under test difficulty. Thus, prompting is operationalized as a background condition within the scope of this project. The future system assumes **a fixed prompting strategy** and focuses on how measured results are fed back into the next generation iteration. The systems reviewed in Section 3 are those that close this feedback loop rather than relying on prompt design alone.
 
 
 ## 3. Feedback-Driven and Coverage-Guided Generation
@@ -22,10 +22,10 @@ Consequently, it is important to highlight the prompting strategy factor when bu
 
 Coverage feedback closes the loop by measuring which lines or branches remain uncovered after a generation round and using this gap as the target for the next prompt. CoverUp implements this loop for Python: it measures coverage with SlipCover, selects uncovered lines, prompts the LLM for tests targeting those lines, executes the tests, and re-prompts on failure (Pizzorno & Berger, 2024). 
 
-TestWeaver, on the other hand, augments this apporach with execution traces and backward slicing, reporting 68% line coverage and 54% branch coverage on the CodaMosa benchmark, against 61% and 47% for CoverUp (Le et al., 2026).
+TestWeaver, on the other hand, augments this approach with execution traces and backward slicing, reporting 68% line coverage and 54% branch coverage on the CodaMosa benchmark, against 61% and 47% for CoverUp (Le et al., 2026).
 The CodaMosa benchmark referred to here is a test suite benchmark introduced by Lemieux et al. (2023) which consists of 486 Python modules on which search-based generation performs poorly. A fully automated test generation tool called Panta (Program ANalysis guided Test Automation) applies a similar loop to Java by combining dynamic coverage with static control-flow analysis and reporting 70.18% line coverage against 43.91% for SymPrompt (Gu et al., 2026).
 
-Meanwhile, the CodaMosa algorithm  itself takes a hybrid approach. Specifically, it runs a search-based algorithm until coverage stalls, deserializes that test case into the internal representation of the search (Lemieux et al., 2023). This method outperfomed MOSA (state-of-the-art algorithm) in terms of coverage metrics on 173 out of 486 benchmarks. 
+Meanwhile, the CodaMosa algorithm  itself takes a hybrid approach. Specifically, it runs a search-based algorithm until coverage stalls, deserializes that test case into the internal representation of the search (Lemieux et al., 2023). This method outperformed MOSA (state-of-the-art algorithm) in terms of coverage metrics on 173 out of 486 benchmarks. 
 
 ### 3.2Execution and Repair Feedback
 
@@ -50,6 +50,26 @@ These studies indicate that static analysis improves generation, but it is appli
 The literature on multi-agent test generation has highlighted several architectural designs. Radaideh et al. (2026) describe CANDOR, which isolates each class and iterates on generated tests. In a recent study, CANDOR achieved a 35.92% mutation score in 50 hours on a 25-class Java system, whilst a one-shot prompt with full project context achieved 88.35% in 45 seconds (Radaideh et al., 2026). The authors attribute the failure to CANDOR's initialization stage, which restricts the model's view to a single class and prevents construction of cross-class dependencies.
 
 This result conflicts with the assumption that more agents and more iterations improve outcomes. The evidence presented in this section suggests that architecture matters more than iteration count, and that closed-loop feedback with full context can outperform a complex multi-agent design when the codebase fits within a single prompt.
+
+
+## 4. Traditional and Search-Based Baselines
+
+Search-based and hybrid approaches provide the baseline for measuring  LLM-based systems. This section states what each baseline contributes to the evaluation design: the coverage floor that the proposed system must exceed, the precedent for combining search with LLM output, and the rationale of using two metrics in evaluation reporting.
+
+### 4.1 Search-Based Testing 
+Pynguin serves as a reference point point for coverage on Python. It builds a test cluster from the module under test and its dependencies, supports multiple evolutionary algorithms, and optimises for line or branch coverage through genetic mutation and fitness evaluation (Lukasczyk & Fraser, 2022). Its DynaMOSA algorithm reaches a mean branch coverage of 68.0% over a 600-second budget, the highest among its five algorithms (Lukasczyk & Fraser, 2022). For the proposed system, this figure defines the floor: a coverage-driven LLM loop should exceed what pure search achieves on the same modules. Otherwise,the added cost of LLM calls is not justified.
+
+### 4.2 Hybrid Combination 
+CodaMosa establishes that combining search with LLM output improves coverage over search alone, achieving significantly higher coverage than MOSA on 173 of 486 benchmarks (Lemieux et al., 2023). Its mechanism is described in 3.1. 
+
+These findings provide an essential architectural baseline. CodaMosa demonstrates that a hybrid pipeline outperforms both component when they are isolated: search provides systematic exploration and a fitness function, while the LLM provides semantically valid inputs that random mutation is unlikely to reach (Lemieux et al., 2023). This supports the design decision to combine proactive static analysis with a coverage-driven loop instead than relying on either mechanism alone. The proposed system extends the hybrid pattern, but with the condition of addressing the timing the LLM query. Particularly, CodaMosa queries the LLM only after search stalls, wheread the proposed system supplies static constraints before the first prompt.
+
+### 4.3 Coverage and Mutation Score(Complementary Metrics)
+
+Abdullin et al. (2025) compared search-based testing, symbolic execution, and LLM-based generation on GitBug-Java, a benchmark of recent Java bugs constructed to reduce data leakage from LLM pre-training. LLM-based generation performed similarly to EvoSuite and Kex except the falling short slightly on average coverage, but it achieved the best median mutation score (Abdullin et al., 2025). The authors also report that LLM-based generation reproduced none of the benchmark bugs, performing worse than both Evo on fault detection.
+
+This divergence between coverage and mutation score is the methodological reason why the evaluation reports both metrics. Coverage measures reach, that is, whether a test executes the target line or branch. Mutation score measures assertion strength, that is, whether the test detects a seeded fault in the code it reaches. A suite can achieve high line coverage while killing few mutants if its assertions are weak or absent, and a suite can kill mutants on the code it reaches while leaving large regions uncovered (Abdullin et al., 2025; Radaideh et al., 2026). Reporting both metrics prevents the evaluation from infalting test quality on the basis of coverage alone and allows the proposed system's contribution to be assessed on both dimensions rather than one.
+
 
 ## References
 Abdullin, A., Derakhshanfar, P., & Panichella, A. (2025). Test Wars: A Comparative Study of SBST, Symbolic Execution, and LLM-Based Approaches to Unit Test Generation. 221–232. https://doi.org/10.1109/ICST62969.2025.10989033
