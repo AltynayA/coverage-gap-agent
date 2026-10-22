@@ -88,15 +88,6 @@ Table 1 summarises the studies reviewed in Sections 2 and 3. Each row correspond
 | Lemieux et al., 2023 | CodaMosa | Python | Coverage (hybrid) | 486 benchmarks | Significantly higher than MOSA on 173 | Search remains central |
 | Lukasczyk & Fraser, 2022 | Pynguin | Python | Coverage | 118 modules | 68.0% mean branch (DynaMOSA) | Dynamic typing limits inference |
 | Abdullin et al., 2025 | SBST vs. symbolic vs. LLM | Java | Mixed | GitBug-Java | LLM comparable coverage; best median mutation | Class-level only |
-| Walczak et al., 2026 | Prompting comparison | Python | None | 12 methods | Chain-of-thought best; CSR varies | Small sample |
-| Yang et al., 2024 | Prompting comparison | Java | None | Defects4J (17 projects) | Prompt style affects CSR and coverage | Data leakage risk |
-| Ouédraogo et al., 2026 | Prompting comparison | Java | None | Defects4J, SF110, CMD | Graph-of-thought best; model-dependent | Limited real-world complexity |
-| Andrzejewski et al., 2025 | Prompting comparison | Python | None | 50 pairs | Simpler prompts outperformed chain-of-thought | Small sample |
-| Lops et al., 2025 | Prompting comparison | Java | None | CLASSES2TEST | Few-shot improved Gemini | Low compilation success |
-| Zhang et al., 2026 | Chain-of-thought + RL | Java | None | 96K focal methods | TestCTRL outperforms baselines | Java bias; data leakage |
-| Zhang et al., 2025 | RAG+NLP | Not specified | None | 100 requirements | Near human-level for simple cases | Complex cases underperform |
-| Bhatia et al., 2024 | ChatGPT vs Pynguin | Python | Iterative prompting | 109 samples | No significant difference for functions | High incorrect assertions |
-| Rodríguez et al., 2026 | LLM vs human | Java | None | 10 artifacts | Both reach 100% branch | Very small sample |
 
 The table supports the following observations:
 1)  The systems that achieve the highest coverage in the reviewed literature combine more than one mechanism: CoverUp and TestWeaver pair coverage with execution feedback, and Panta pairs coverage with static control flow. No single-mechanism system appears at the top of any metric. 
