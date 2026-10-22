@@ -134,4 +134,4 @@ The static analysis, generation, and coverage measurement components shall be se
 | Should | 5 | FR-6, FR-7, FR-8, NFR-4, NFR-5, NFR-6 |
 | Could | 2 | FR-9, NFR-7 |
 
-If the project is under time pressure, the Must requirements define the minimum viable system. The Should requirements define the version needed for the full evaluation. The Could requirements are quality-of-life additions.
+Must requirements define the minimum viable system in case of time pressure. Should requirements define the version needed for the full evaluation. The Could requirements are additional improvements.
