@@ -11,14 +11,25 @@ Developers rely on code coverage metrics to identify untested lines, but identif
 
 The system combines **proactive static analysis** (to extract branch constraints before generation) with **coverage-driven feedback** (to iteratively improve the generated tests). It is evaluated against existing baselines (CoverUp, Pynguin) using the CodaMosa benchmark.
 
-## How it works
+*   **Target Users:** Python developers and QA engineers.
+*   **Expected Outcome:** A Python CLI agent and a VS Code extension (MVP) that improve line and branch coverage on the CodaMosa benchmark.
+*   **Scope:** Unit test generation for Python only. Integration testing and cost optimization are out of scope.
 
-1. Run the unit tests and collect the coverage report
-2. Find uncovered lines and branches
-3. Analyze the code around each gap with static analysis tools
-4. Ask the LLM to write a test for that gap
-5. Run the new tests and check the coverage again
+(For full details, see the [Project Proposal](docs/01-project-proposal.md)).
 
+## Current Status
+
+**Phase:** Pre-defense 1 (24 October 2026).
+The documentation and architectural design are complete. Implementation of the agent core and VS Code extension will begin in the next phase.
+
+## Selected Technologies
+
+- **Language:** Python 3.10+
+- **Coverage Measurement:** SlipCover
+- **Testing Framework:** pytest
+- **LLM Integration:** OpenAI / Anthropic API (configurable)
+- **UI:** VS Code Extension API
+  
 ## Repository Structure
 
 The repository is organized into documentation and source code:
