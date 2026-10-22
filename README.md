@@ -1,8 +1,9 @@
-## Title
-Development of an Al Agent for Automated Code Coverage Gap Detection and Unit Test
+
+# Development of an Al Agent for Automated Code Coverage Gap Detection and Unit Test Generation
 
 **Author:** Altynay Ayazbayeva  
 **Supervisor:** Praveen Kumar
+
 **Institution:** Astana IT University
 
 ## Project Overview
@@ -18,7 +19,7 @@ The system combines **proactive static analysis** (to extract branch constraints
 4. Ask the LLM to write a test for that gap
 5. Run the new tests and check the coverage again
 
-6. ## Repository Structure
+## Repository Structure
 
 The repository is organized into documentation and source code:
 
@@ -41,7 +42,7 @@ The repository is organized into documentation and source code:
 │   └── appendix-a-evidence.md
 ├── src/              # agent core source code (Python)
 └── tests/            # automted tests for the agent
-
+```
 ## Links
 
 - YouTrack: https://altynay-ayazbayeva.youtrack.cloud/projects/CGA
