@@ -1,0 +1,34 @@
+flowchart TD
+    subgraph CoreLoop ["Agent Orchestrator (FR-3)"]
+        Orchestrator["Iterative Loop Manager"]
+        PromptBuilder["Prompt Builder (FR-1, FR-4)"]
+    end
+
+    subgraph Analysis ["Analysis & Execution"]
+        StaticAnalyzer["Static Analyzer (FR-1)"]
+        TestExecutor["Test Executor (FR-4)"]
+        CoverageTool["Coverage Tool: SlipCover (FR-2, NFR-2)"]
+        MutationTool["Mutation Tool: MutPy (FR-6, NFR-4)"]
+    end
+
+    subgraph Storage ["Data & Logging"]
+        PromptLog[("Prompt & Error Logs (FR-9)")]
+        Results[("Results CSV (FR-6)")]
+    end
+
+    Code[("Target Python Code")] --> StaticAnalyzer
+    StaticAnalyzer -->|"Extracted constraints"| Orchestrator
+    
+    Orchestrator -->|"Request test for constraints"| PromptBuilder
+    PromptBuilder -->|"Formatted Prompt"| LLM["External LLM API"]
+    LLM -->|"Generated Python Tests"| Orchestrator
+    
+    Orchestrator -->|"Test files"| TestExecutor
+    TestExecutor -->|"Pass/Fail & Errors"| Orchestrator
+    TestExecutor -->|"Executed trace"| CoverageTool
+    CoverageTool -->|"Coverage delta"| Orchestrator
+    
+    Orchestrator -.->|"Log every step"| PromptLog
+    CoverageTool -->|"Final metrics"| Results
+    TestExecutor -->|"Passed tests"| MutationTool
+    MutationTool -->|"Mutation score"| Results

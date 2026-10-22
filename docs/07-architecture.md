@@ -26,3 +26,17 @@ The Use Case Diagram defines the functional scenarios of the system. These direc
 <p align="center">
   <img src="../diagrams/use-case-diagram.png" alt="use case diagram" width="400">
 </p>
+
+## 7.4 Component Diagram 
+The Component Diagram shows the internal structure of the system and how data moves between the modules.
+
+<p align="center">
+  <img src="../diagrams/component-diagram.png" alt="Component diagram" width="400">
+</p>
+
+**Data Flow Alignment:**
+- **Static Analyzer:** Takes the target code and outputs constraints to the Orchestrator (FR-1).
+- **Prompt Builder:** Takes constraints and previous execution errors to build the prompt (FR-1, FR-4).
+- **Test Executor:** Runs the generated code and passes the execution trace to SlipCover (FR-4).
+- **Coverage Tool (SlipCover):** Measures the execution trace and returns the coverage delta (FR-2, NFR-2).
+- **Mutation Tool:** Runs independently on passing test suites to calculate the mutation score (FR-6, NFR-4).
