@@ -1,0 +1,30 @@
+flowchart TD
+    %% External Actors
+    Developer([Python Developer / QA Engineer])
+    Supervisor([Project Supervisor])
+    
+    %% The System Boundary
+    subgraph SystemBoundary ["AI Coverage-Gap Agent System"]
+        SystemCore["Agentic Test Generation Core"]
+    end
+    
+    %% External Systems and Data Stores
+    LLM_API["External LLM API\n(e.g., OpenAI, Anthropic)"]
+    Codebase[("Target Python Codebase")]
+    Benchmark[("CodaMosa Benchmark Suite")]
+    
+    %% Interactions
+    Developer -->|"1. Provides code & budget\n2. Reviews generated tests"| SystemCore
+    Supervisor -->|"Reviews evaluation reports"| SystemCore
+    
+    SystemCore -->|"Reads source code"| Codebase
+    SystemCore -->|"Writes generated tests"| Codebase
+    SystemCore -->|"Sends prompts & receives code"| LLM_API
+    SystemCore -->|"Runs benchmark evaluation (FR-7)"| Benchmark
+    
+    %% Styling
+    classDef system fill:#d4edda,stroke:#28a745,stroke-width:2px;
+    classDef external fill:#f8f9fa,stroke:#6c757d,stroke-width:1px,stroke-dasharray: 5 5;
+    
+    class SystemCore system;
+    class LLM_API,Codebase,Benchmark external;
