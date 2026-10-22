@@ -17,15 +17,15 @@ Three systems are compared: Coverup, Pyngiun and Diffblue Cover. These three sys
 
 ## 4.3 Evidence for Claims
 
-### CoverUp has reactive static analysis
+### 4.3.1 CoverUp has reactive static analysis
 
 CoverUp (1) uses SlipCover coverage analyzer to find lines lacking coverage, (2) prompts LLMs for test for these targeted segments,(3) executes these tests, and (4) verifies before re-prompting. However, its static analysis segment cannot provide the LLM with correct context if there are conditional imports  (e.g., imports tha resolve package differences across Python versions) in code under test (Pizzorno & Berger,2024). This paper also mentions that CoverUp exposes get_info function which LLM can additionally request (e.g., types and variables), and both call request and response are appended to previous messages. Also, its reactive approach is confirmed in the official documentation where it is stated that CoverUp has conversation-based approach (GitHub - Plasma-Umass/Coverup: Automatic AI-Powered Test Suite Generator, 2025), so static analysis is a tool that can be requested during the dialogue, not a preprocessing step before creating the prompt.
 
-### Pynguin's core generation is search-based
+### 4.3.2 Pynguin's core generation is search-based
 
 Pynguin functions as a Search-Based Software Engineering (SBSE) framework, and its core generation uses five genetic algorithms (Dynamosa, MOSA, MIO, WHOLE_SUITE, RANDOM) (Lukasczyk & Fraser, 2022). But, recent versions added optional LLM-assisted algorithms ( LLM, LLDYNAMOSA, LLMOSA). For example. Pynguin 0.41 release notes include the addition of LLM capabilities which are prompting, parsing, and the LLMOSAAlgorithm. and 0.47 version added LLDynaMOSA (DynaMosa + LLM calls on stall) (Releases · Se2p/Pynguin, n.d.).
 
-### Diffblue Cover is Java/RL-based, while Python support is a recent offering
+### 4.3.3 Diffblue Cover is Java/RL-based, while Python support is a recent offering
 
 Diffblue Cover is described in its official documentation as "a reinforcement learning AI platform that automatically writes comprehensive, human-like Java unit tests" (Discover Diffblue Cover | Diffblue Documentation, 2025). However, Python support is added through Diffblue Testing Agent to orchestrate Python test generation (Diffblue, 2026). 
 
@@ -38,7 +38,6 @@ Overall, the three claims point to a shared limitation rather than three separat
 
 
 Therefore, constraints that are not recognized by the generator are absent in the first generation attempt, and system resolves it only through failed execution and retries. Thsi is essential to this project because coverage improvement is tightly coupled with the time taken for loop to discover these constraints, therefore, iterations are spent to recover from missing constraints instead of targeting uncovered branches. The proposed system will adress this challenge by **extracting these constraints before the first prompt**. Although it is important to acknowledge that researched existing systems apply static analysis, the limitation  occurs in terms of the timing of these analyses.
-
 
 
 

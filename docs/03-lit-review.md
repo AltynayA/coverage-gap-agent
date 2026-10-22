@@ -1,8 +1,8 @@
-# Literature Review
+# 3. Literature Review
 
-## 1. Introduction
+## 3.1 Introduction
 This section provides an overview on research on regarding unit test generation with the use of large language models (LLMs) and prioritizes feedback mechanisma that guide iterations.  A systematic search was conducted using the SCopus daatabse, and relevant work between 2023 and 2026 was selected. This reviews provides a baseline for existing systems comparison in Section 4. 
-## 2. Research Context
+## 3.2 Research Context
 
 Software testing plays a critical role in the software development cycle and maintenance of its quality and functionality (Escalante-Viteri & Mauricio, 2025). According to Wang et al. (2024), automated unit test case generation remains an ongoing challenge within this scope. To address this, previous research has established the possibility of Machine Learning-based code synthesis techniques, specifically the prospect of Large Language Models (LLMs) due to their advancement in recent years. The capacity for solving complex practical tasks in code generation is illustrated by advanced models such as ChatGPT and LLaMA (Wang et al., 2024). Considering that a number of studies have begun to examine the application of LLM in generating unit tests (Dakhel et al., 2024; Pan et al., 2025), it is important to establish that their evaluation is handled through code coverage. Andrzejewski et al. (2025) define code coverage as a metric showing the proportion of source code exercised during test runs.
 
@@ -10,15 +10,15 @@ Software testing plays a critical role in the software development cycle and mai
 Two observations frame the rest of this review. First, prompting strategy affects code coverage and correctness of generated tests, but the effect is inconsistent across different models, datasets, and code difficulty. Second, the strongest recent systems do not rely on prompting alone, instead they measure the result of a generation round and use that measurement to guide the next round. The review therefore treats prompting as a background finding and focuses on feedback mechanisms.
 
 
-### 2.1 Prompting Strategy Background
+### 3.2.1 Prompting Strategy Background
 Research over the last two years confirms that prompting strategy affects code coverage of LLM-generated unit tests (Walczak et al., 2026; Yang et al., 2024; Ouédraogo et al., 2026). Several studies have successfully compared prompting strategies among each other (Andrzejewski et al., 2025; Lops et al., 2025) and compared them with external baselines such as manually written tests or traditional tools like Pynguin and EvoSuite (Rodríguez et al., 2026; Bhatia et al., 2024; Ouédraogo et al., 2026). These studies are consistent in measuring prompting strategy using standard metrics such as code coverage, compilation success rate, and mutation score. However, these studies take different variables into account such as model family and code context size (Walczak et al., 2026), reinforcement learning and model fine-tuning (Zhang et al., 2026), integrating a retrieval-augmented generation (RAG) framework (Zhang et al., 2025), or model type and case difficulty (Andrzejewski et al., 2025).
 Consequently, the question of how isolating prompting strategy as a single controlled variable affects these metrics remains unresolved. Although prompting strategy is a legitimate variable, its effect is not consistent . This variation justifies the systems reviewed in Section 3, which measure the result of generation and feed it back rather than relying on prompt design solely.
 
 Consequently, it is important to highlight the prompting strategy factor when building this system.  First, prompting strategy is a legimate variable and its effect on coverage is measurable. Second, the extent of that effect depends on the model, the dataset, and the code under test difficulty. Thus, prompting is operationalized as a background condition within the scope of this project. The future system assumes **a fixed prompting strategy** and focuses on how measured results are fed back into the next generation iteration. The systems reviewed in Section 3 are those that close this feedback loop rather than relying on prompt design alone.
 
 
-## 3. Feedback-Driven and Coverage-Guided Generation
-### 3.1 Coverage feedback
+## 3.3 Feedback-Driven and Coverage-Guided Generation
+### 3.3.1 Coverage feedback
 
 Coverage feedback closes the loop by measuring which lines or branches remain uncovered after a generation round and using this gap as the target for the next prompt. CoverUp implements this loop for Python: it measures coverage with SlipCover, selects uncovered lines, prompts the LLM for tests targeting those lines, executes the tests, and re-prompts on failure (Pizzorno & Berger, 2024). 
 
@@ -27,51 +27,51 @@ The CodaMosa benchmark referred to here is a test suite benchmark introduced by 
 
 Meanwhile, the CodaMosa algorithm  itself takes a hybrid approach. Specifically, it runs a search-based algorithm until coverage stalls, deserializes that test case into the internal representation of the search (Lemieux et al., 2023). This method outperformed MOSA (state-of-the-art algorithm) in terms of coverage metrics on 173 out of 486 benchmarks. 
 
-### 3.2Execution and Repair Feedback
+### 3.3.2 Execution and Repair Feedback
 
 Several studies have investigated the use of execution results to correct the next attempt. ChatUniTest implements a three-stage pipeline of preprocessing, generation, and post-processing, in which generated tests pass through syntactic, compile-time, and runtime validation, and failures trigger rule-based repair followed by LLM-based repair that feeds the error message back to the model (Chen et al., 2024). ChaCo applies a similar repair loop to pull-request-level test augmentation, executing candidate tests and using runtime feedback to repair them before integration (Zhou et al., 2026).
 
 In these systems, execution feedback is used to make generated tests compile and pass. As noted by the ChatUniTest authors, the pipeline contains no coverage measurement, so execution feedback there addresses correctness rather than coverage (Chen et al., 2024). By contrast, ChaCo combines execution feedback with patch coverage (Zhou et al., 2026). Systems that pair execution feedback with coverage targets (CoverUp, TestWeaver) use the execution result to repair tests within a coverage-driven loop (Pizzorno & Berger, 2024; Le et al., 2026).
 
-### 3.3 Mutation Feedback
+### 3.3.3 Mutation Feedback
 
 More recent attention has focused on mutation feedback, which uses surviving mutants as the signal for the next generation round. A recent study by Dakhel et al. (2024) proposed MuTAP, which augments prompts with mutation-testing information, and it reported  reported a mutation score of 93.57% with llama-2-chat and few-shot prompting. A study by Radaideh et al. (2026) compared one-shot and multi-agent generation on a Java system using mutation score as the primary metric, and found that one-shot generation with full project context outperformed a multi-agent loop when the loop isolated classes and could not construct cross-class dependencies.
 
 Combined, these studies indicate that mutation feedback asks a different question from coverage feedback: not "was this line executed?" but "would this test detect a fault?" The two signals are complementary, and the evidence reviewed here suggests that coverage alone overstates test quality (Dakhel et al., 2024; Abdullin et al., 2025; Radaideh et al., 2026).
 
 
-### 3.4 Static Context and Hallucination
+### 3.3.4 Static Context and Hallucination
 Previous research has established that insufficient context is a documented cause of invalid generated tests. Yang et al. (2024) reported unresolved symbols, parameter mismatches, and abstract instantiation as three main error categories in generated tests. To address this, ChatUniTest uses an adaptive focal-context mechanism that assembles the most relevant information about the focal method, its class, and dependent classes within the token limit (Chen et al., 2024). Similarly, Panta extracts static control-flow information to identify execution paths that need coverage (Gu et al., 2026), and TestWeaver computes backward slices and annotates them with runtime variable values before re-prompting (Le et al., 2026).
 
 These studies indicate that static analysis improves generation, but it is applied during the loop. Particularly, it is  after a test fails, after a target is selected, or after a coverage plateau, which is the point where it stops increasing, is detected. Static analysis in LLM-based test generation is not thoroughly investigated and there is not data on injecting extracted branch conditions or type constraints into the first prompt in reviewed systems. Although ChatUniTest's Object Construction Graphs are the closest existing mechanism,they guide driver-code construction and have no branch conditions encoding (Chen et al., 2024).
 
-### 3.5 Agent Architectures Without Closed-Loop Feedback
+### 3.3.5 Agent Architectures Without Closed-Loop Feedback
 
 The literature on multi-agent test generation has highlighted several architectural designs. Radaideh et al. (2026) describe CANDOR, which isolates each class and iterates on generated tests. In a recent study, CANDOR achieved a 35.92% mutation score in 50 hours on a 25-class Java system, whilst a one-shot prompt with full project context achieved 88.35% in 45 seconds (Radaideh et al., 2026). The authors attribute the failure to CANDOR's initialization stage, which restricts the model's view to a single class and prevents construction of cross-class dependencies.
 
 This result conflicts with the assumption that more agents and more iterations improve outcomes. The evidence presented in this section suggests that architecture matters more than iteration count, and that closed-loop feedback with full context can outperform a complex multi-agent design when the codebase fits within a single prompt.
 
 
-## 4. Traditional and Search-Based Baselines
+## 3.4 Traditional and Search-Based Baselines
 
 Search-based and hybrid approaches provide the baseline for measuring  LLM-based systems. This section states what each baseline contributes to the evaluation design: the coverage floor that the proposed system must exceed, the precedent for combining search with LLM output, and the rationale of using two metrics in evaluation reporting.
 
-### 4.1 Search-Based Testing 
+### 3.4.1 Search-Based Testing 
 Pynguin serves as a reference point point for coverage on Python. It builds a test cluster from the module under test and its dependencies, supports multiple evolutionary algorithms, and optimises for line or branch coverage through genetic mutation and fitness evaluation (Lukasczyk & Fraser, 2022). Its DynaMOSA algorithm reaches a mean branch coverage of 68.0% over a 600-second budget, the highest among its five algorithms (Lukasczyk & Fraser, 2022). For the proposed system, this figure defines the floor: a coverage-driven LLM loop should exceed what pure search achieves on the same modules. Otherwise,the added cost of LLM calls is not justified.
 
-### 4.2 Hybrid Combination 
+### 3.4.2 Hybrid Combination 
 CodaMosa establishes that combining search with LLM output improves coverage over search alone, achieving significantly higher coverage than MOSA on 173 of 486 benchmarks (Lemieux et al., 2023). Its mechanism is described in 3.1. 
 
 These findings provide an essential architectural baseline. CodaMosa demonstrates that a hybrid pipeline outperforms both component when they are isolated: search provides systematic exploration and a fitness function, while the LLM provides semantically valid inputs that random mutation is unlikely to reach (Lemieux et al., 2023). This supports the design decision to combine proactive static analysis with a coverage-driven loop instead than relying on either mechanism alone. The proposed system extends the hybrid pattern, but with the condition of addressing the timing the LLM query. Particularly, CodaMosa queries the LLM only after search stalls, wheread the proposed system supplies static constraints before the first prompt.
 
-### 4.3 Coverage and Mutation Score(Complementary Metrics)
+### 3.4.3 Coverage and Mutation Score(Complementary Metrics)
 
 Abdullin et al. (2025) compared search-based testing, symbolic execution, and LLM-based generation on GitBug-Java, a benchmark of recent Java bugs constructed to reduce data leakage from LLM pre-training. LLM-based generation performed similarly to EvoSuite and Kex except the falling short slightly on average coverage, but it achieved the best median mutation score (Abdullin et al., 2025). The authors also report that LLM-based generation reproduced none of the benchmark bugs, performing worse than both Evo on fault detection.
 
 This divergence between coverage and mutation score is the methodological reason why the evaluation reports both metrics. Coverage measures reach, that is, whether a test executes the target line or branch. Mutation score measures assertion strength, that is, whether the test detects a seeded fault in the code it reaches. A suite can achieve high line coverage while killing few mutants if its assertions are weak or absent, and a suite can kill mutants on the code it reaches while leaving large regions uncovered (Abdullin et al., 2025; Radaideh et al., 2026). Reporting both metrics prevents the evaluation from infalting test quality on the basis of coverage alone and allows the proposed system's contribution to be assessed on both dimensions rather than one.
 
 
-## 5. Summary of Reviewed Studies
+## 3.5 Summary of Reviewed Studies
 Table 1 summarises the studies reviewed in Sections 2 and 3. Each row corresponds to one source; the columns record the approach, the language, the feedback type, the benchmark, the principal result, and the limitation most relevant to this project.
 
 **Table 1. Comparison of reviewed systems.**
@@ -103,7 +103,7 @@ The table supports the following observations:
 2) The limitation column is consistent across the coverage-driven systems: each applies static analysis or execution feedback during the loop, and none applies it before the first prompt.
 
 
-## 6. Synthesis and Research Gap
+## 3.6 Synthesis and Research Gap
 Three findings emerge from the reviewed literature.
 
 First, prompting strategy affects coverage and correctness, but the effect is inconsistent and cannot be depended on in isolation (Section 2.1). Prompting is a background condition, not the mechanism that closes coverage gaps (Walczak et al., 2026; Yang et al., 2024; Andrzejewski et al., 2025; Ouédraogo et al., 2026).

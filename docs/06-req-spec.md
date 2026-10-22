@@ -1,16 +1,16 @@
-# Requirements Specification
+# 6. Requirements Specification
 
-## 1. Purpose and Scope
+## 6.1 Purpose and Scope
 
 This document specifies the functional and non-functional requirements for an agentic AI system that improves unit test coverage for Python modules. The system extracts static constraints before generation, uses coverage feedback to drive iteration, and reports both coverage and mutation score. Requirements are derived from the literature review (Sections 4–5) and from the proposed system's technology choices.
 
-## 2. Stakeholders
+## 6.2 Stakeholders
 
 - **Primary user:** a Python developer who wants to improve test coverage on a module or package.
 - **Secondary user:** a QA or test engineer who reviews generated tests before merging.
 - **Project supervisor:** reviews deliverables and provides feedback at agreed checkpoints.
 
-## 3. Functional Requirements
+## 6.3 Functional Requirements
 
 Priorities use MoSCoW (Must, Should, Could) model and each requirement has an acceptance criterion that can be verified.
 
