@@ -1,0 +1,24 @@
+flowchart LR
+    Developer([Developer])
+    API([LLM API])
+
+    subgraph AgentSystem ["AI Agent System"]
+        direction TB
+        UC1["Configure LLM & Budget (FR-8)"]
+        UC2["Run Agent on Module"]
+        UC3["Extract Static Constraints (FR-1)"]
+        UC4["Generate Tests via LLM"]
+        UC5["Execute Tests & Measure Coverage (FR-2, FR-4)"]
+        UC6["Report Coverage & Mutation (FR-6)"]
+        UC7["Run Benchmark Suite (FR-7)"]
+    end
+
+    Developer --> UC1
+    Developer --> UC2
+    Developer --> UC7
+    Developer --> UC6
+
+    UC2 -.->|include| UC3
+    UC2 -.->|include| UC4
+    UC2 -.->|include| UC5
+    UC4 -->|API Call| API

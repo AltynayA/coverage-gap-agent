@@ -20,3 +20,9 @@ The System Context Diagram defines the boundaries of the system, showing who use
 <p align="center"><img src="../diagrams/system-context-diagram.png" alt="System context diagram"  width="400">
 </p>
 
+## 7.3 Use Case Diagram
+The Use Case Diagram defines the functional scenarios of the system. These directly address the Functional Requirements (FR-1 to FR-9).
+
+<p align="center">
+  <img src="../diagrams/use-case-diagram.png" alt="use case diagram" width="400">
+</p>
