@@ -40,3 +40,16 @@ The Component Diagram shows the internal structure of the system and how data mo
 - **Test Executor:** Runs the generated code and passes the execution trace to SlipCover (FR-4).
 - **Coverage Tool (SlipCover):** Measures the execution trace and returns the coverage delta (FR-2, NFR-2).
 - **Mutation Tool:** Runs independently on passing test suites to calculate the mutation score (FR-6, NFR-4).
+
+## 7.5 Alignment Check
+
+This table shows that every component in the architecture directly fulfills a specific requirement and is represented in the diagrams, so a consistency between design and specification is maintained.
+
+| Requirement | Component Responsible | Diagram Reference |
+|---|---|---|
+| **FR-1** (Proactive analysis) | Static Analyzer, Prompt Builder | Component Diagram |
+| **FR-2** (Coverage measurement) | Coverage Tool | Component Diagram |
+| **FR-3** (Iterative loop) | Agent Orchestrator | Component Diagram |
+| **FR-4** (Execution feedback) | Test Executor, Prompt Builder | Component Diagram |
+| **FR-6** (Mutation reporting) | Mutation Tool | Component Diagram |
+| **NFR-2** (Low overhead) | Coverage Tool (SlipCover) | Component Diagram |
