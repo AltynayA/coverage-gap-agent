@@ -1,32 +1,32 @@
-# Project Proposal
+# 1. Project Proposal
 
-## Project Title
+## 1.1 Project Title
 Development of an Al Agent for Automated Code Coverage Gap Detection and Unit Test Generation
 
-## Problem Statement
+## 1.2 Problem Statement
 Developer rely on code coverage metrics to idenitfy untested lines.However, identifying these gaps is slow, manual, and error-prone.
 
-## Target Users
+## 1.3 Target Users
 Python developers who need to raise test coverage 
 
-## Project Aim
+## 1.4 Project Aim
 Build an Agentic AI tool that automatically finds uncovered code and generates unit tests to cover it.
 
-## Objectives
+## 1.5 Objectives
 1. Run existing tests and parse coverage reports to find gaps
 2. Use static analysis to understand code context around each gap
 3. Use an LLM to generate tests for each gap
 4. Evaluate whether the generated tests improve coverage
 5. Iterate until coverage stops improving
 
-## Expected Results
+## 1.6 Expected Results
 (a) A Python agent core with a command-line interface that runs the iterative loop.
 
 (b) A VS Code extension (MVP) that displays gaps in the editor, runs the agent, and shows generated tests for review.
 
  (c) An evaluation comparing the agent with baselines on benchmark projects 
 
-## Project Scope
+## 1.6 Project Scope
 
 | In | Out|
 | :---     | :---:    | 
